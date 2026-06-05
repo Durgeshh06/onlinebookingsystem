@@ -1,18 +1,21 @@
 import os
-import shutil
 from pathlib import Path
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'devbhoomi.settings')
-
-# Vercel runs from a read-only filesystem for the app bundle, so copy the
-# bundled SQLite database into /tmp before Django opens it.
-source_db = Path(__file__).resolve().parent.parent / 'db.sqlite3'
-target_db = Path('/tmp/devbhoomi.sqlite3')
-if source_db.exists() and not target_db.exists():
-    target_db.parent.mkdir(parents=True, exist_ok=True)
-    shutil.copy2(source_db, target_db)
-os.environ.setdefault('DB_PATH', str(target_db))
 os.environ.setdefault('VERCEL', '1')
+os.environ.setdefault('DB_PATH', '/tmp/devbhoomi.sqlite3')
+
+import django
+from django.core.management import call_command
+
+# Vercel uses an ephemeral filesystem, so the SQLite file must live in /tmp.
+# Create the file path and apply migrations at startup so the tables exist.
+target_db = Path(os.environ['DB_PATH'])
+target_db.parent.mkdir(parents=True, exist_ok=True)
+target_db.touch(exist_ok=True)
+
+django.setup()
+call_command('migrate', interactive=False, verbosity=0)
 
 from devbhoomi.wsgi import application
 
