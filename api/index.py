@@ -16,6 +16,8 @@ target_db.touch(exist_ok=True)
 
 django.setup()
 call_command('migrate', interactive=False, verbosity=0)
+call_command('collectstatic', interactive=False, verbosity=0)
+call_command('seed_data', verbosity=0)
 
 from devbhoomi.wsgi import application
 
