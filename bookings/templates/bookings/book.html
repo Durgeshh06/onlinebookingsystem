@@ -1,0 +1,107 @@
+{% extends 'bookings/base.html' %}
+
+{% block title %}Checkout - Book {{ service.title }} | DevBhoomi{% endblock %}
+
+{% block content %}
+<section class="py-12 bg-amber-50/10">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        <!-- Page Title -->
+        <div class="text-center mb-10">
+            <h1 class="text-3xl font-extrabold text-slate-900 font-outfit">Pooja Reservation Checkout</h1>
+            <p class="text-slate-500 mt-2">Provide the auspicious date, time, and address details to secure your booking.</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-8">
+            
+            <!-- Left Column: Checkout Form (8 columns) -->
+            <div class="md:col-span-7 bg-white rounded-3xl p-8 border border-orange-100 shadow-sm">
+                <form method="POST" action="{% url 'book' service.slug %}" class="space-y-6">
+                    {% csrf_token %}
+
+                    <!-- Date of Pooja -->
+                    <div>
+                        <label for="date_of_pooja" class="block text-sm font-semibold text-slate-700 mb-2">Auspicious Date</label>
+                        <div class="relative">
+                            <input type="date" name="date_of_pooja" id="date_of_pooja" required min="{% now 'Y-m-d' %}" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-saffron-500 focus:bg-white text-slate-800 transition-all font-medium">
+                        </div>
+                        <p class="mt-1.5 text-xs text-slate-400">Select the date on which you want to conduct the ritual.</p>
+                    </div>
+
+                    <!-- Muhurat Time -->
+                    <div>
+                        <label for="muhurat_time" class="block text-sm font-semibold text-slate-700 mb-2">Auspicious Muhurat Time</label>
+                        <input type="time" name="muhurat_time" id="muhurat_time" required class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-saffron-500 focus:bg-white text-slate-800 transition-all font-medium">
+                        <p class="mt-1.5 text-xs text-slate-400">Enter the exact slot recommended by your Astrologer or your preferred morning/evening time.</p>
+                    </div>
+
+                    <!-- Venue Address -->
+                    <div>
+                        <label for="venue_address" class="block text-sm font-semibold text-slate-700 mb-2">Venue Address</label>
+                        <textarea name="venue_address" id="venue_address" rows="4" required placeholder="Enter complete flat number, society name, street address, area name, landmark, and city." class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-saffron-500 focus:bg-white text-slate-800 transition-all font-medium placeholder-slate-400"></textarea>
+                        <p class="mt-1.5 text-xs text-slate-400">Provide complete directions so the assigned Pandit Ji can reach the location easily.</p>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <button type="submit" class="w-full py-4 px-6 border border-transparent rounded-2xl text-base font-bold text-white gradient-safran shadow-md hover:shadow-lg hover:scale-[1.01] transform transition-all duration-150">
+                        Confirm & Reserve Slot
+                    </button>
+                </form>
+            </div>
+
+            <!-- Right Column: Summary Card (5 columns) -->
+            <div class="md:col-span-5">
+                <div class="bg-white border border-orange-100 rounded-3xl p-6 shadow-sm sticky top-28">
+                    <h3 class="text-lg font-bold text-slate-800 font-outfit mb-4">Pooja Summary</h3>
+                    
+                    <!-- Service card header -->
+                    <div class="flex items-center space-x-4 pb-6 border-b border-orange-50 mb-6">
+                        <div class="w-16 h-16 rounded-xl overflow-hidden bg-slate-100 flex-shrink-0">
+                            {% if service.image %}
+                                <img src="{{ service.image }}" alt="{{ service.title }}" class="object-cover w-full h-full">
+                            {% else %}
+                                <div class="w-full h-full flex items-center justify-center bg-orange-100 text-saffron-500 font-bold text-xs">
+                                    Pooja
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div>
+                            <h4 class="text-sm font-bold text-slate-800 leading-snug">{{ service.title }}</h4>
+                            <span class="text-[11px] text-slate-400 font-medium">{{ service.estimated_duration_hours }} Hours Est.</span>
+                        </div>
+                    </div>
+
+                    <!-- Cost Breakup -->
+                    <div class="space-y-3 mb-6">
+                        <div class="flex justify-between text-xs">
+                            <span class="text-slate-500">Pooja Package Base price</span>
+                            <span class="text-slate-800 font-semibold">₹{{ service.base_price }}</span>
+                        </div>
+                        <div class="flex justify-between text-xs">
+                            <span class="text-slate-500">Vedic Pandit Assignment</span>
+                            <span class="text-emerald-600 font-semibold">FREE</span>
+                        </div>
+                        <div class="flex justify-between text-xs">
+                            <span class="text-slate-500">Service Taxes & Booking Fees</span>
+                            <span class="text-emerald-600 font-semibold">₹0</span>
+                        </div>
+                    </div>
+
+                    <!-- Total Cost -->
+                    <div class="flex justify-between items-center pt-4 border-t border-orange-50 mb-6">
+                        <span class="text-sm font-bold text-slate-800">Total Payable Amount</span>
+                        <span class="text-xl font-extrabold text-saffron-500 font-outfit">₹{{ service.base_price }}</span>
+                    </div>
+
+                    <!-- Notice banner -->
+                    <div class="bg-amber-50/50 border border-orange-100 p-4 rounded-xl text-[11px] text-slate-500 leading-relaxed">
+                        <strong class="text-slate-700">Please Note:</strong> Our automated booking engine will assign the best matching, certified, local Pandit Ji based on your venue city and selected language preferences. All booking transactions are fully secured.
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</section>
+{% endblock %}

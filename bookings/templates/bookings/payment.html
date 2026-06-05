@@ -1,0 +1,80 @@
+{% comment %} Payment page removed. Payment flow has been disabled; this template is intentionally left blank. {% endcomment %}
+                <div class="bg-white border border-orange-100 rounded-3xl p-6 shadow-md">
+                    <h3 class="text-lg font-bold text-slate-800 font-outfit mb-6">Booking Details</h3>
+                    
+                    <!-- Booking ID -->
+                    <div class="flex justify-between items-center pb-4 border-b border-orange-50">
+                        <span class="text-slate-600 font-medium">Booking ID:</span>
+                        <span class="text-slate-800 font-bold text-lg">#{{ booking.id }}</span>
+                    </div>
+                    
+                    <!-- Service -->
+                    <div class="flex justify-between items-center py-4 border-b border-orange-50">
+                        <span class="text-slate-600 font-medium">Pooja Service:</span>
+                        <span class="text-slate-800 font-semibold">{{ booking.pooja.title }}</span>
+                    </div>
+                    
+                    <!-- Date -->
+                    <div class="flex justify-between items-center py-4 border-b border-orange-50">
+                        <span class="text-slate-600 font-medium">Scheduled Date:</span>
+                        <span class="text-slate-800 font-semibold">{{ booking.date_of_pooja|date:"d M, Y" }}</span>
+                    </div>
+                    
+                    <!-- Time -->
+                    <div class="flex justify-between items-center py-4 border-b border-orange-50">
+                        <span class="text-slate-600 font-medium">Muhurat Time:</span>
+                        <span class="text-slate-800 font-semibold">{{ booking.muhurat_time }}</span>
+                    </div>
+                    
+                    <!-- Venue -->
+                    <div class="py-4 border-b border-orange-50">
+                        <span class="text-slate-600 font-medium block mb-2">Venue Address:</span>
+                        <p class="text-slate-700 text-sm leading-relaxed whitespace-pre-wrap">{{ booking.venue_address }}</p>
+                    </div>
+                </div>
+
+                <!-- Payment Amount Card -->
+                <div class="bg-gradient-to-br from-saffron-50 to-orange-50 border-2 border-saffron-500 rounded-3xl p-6 shadow-md">
+                    <div class="flex justify-between items-center mb-4">
+                        <span class="text-slate-700 font-medium">Base Price:</span>
+                        <span class="text-slate-800 font-semibold">₹{{ amount }}</span>
+                    </div>
+                    <div class="flex justify-between items-center mb-4 pb-4 border-b border-saffron-200">
+                        <span class="text-slate-700 font-medium">Service Fee:</span>
+                        <span class="text-emerald-600 font-semibold">FREE</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-lg font-bold text-slate-800 font-outfit">Total Amount:</span>
+                        <span class="text-3xl font-extrabold text-saffron-600 font-outfit">₹{{ amount }}</span>
+                    </div>
+                </div>
+
+                <!-- Important Notice -->
+                <div class="bg-blue-50 border-l-4 border-blue-500 rounded-lg p-4">
+                    <div class="flex items-start">
+                        <div class="flex-shrink-0">
+                            <svg class="h-5 w-5 text-blue-500" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M18 5v8a2 2 0 01-2 2h-5l-5 4v-4H4a2 2 0 01-2-2V5a2 2 0 012-2h12a2 2 0 012 2zm-11-1a1 1 0 11-2 0 1 1 0 012 0zM8 8a1 1 0 000 2h6a1 1 0 100-2H8zm0 3a1 1 0 000 2h3a1 1 0 100-2H8z" clip-rule="evenodd"/>
+                            </svg>
+                        </div>
+                        <div class="ml-3">
+                            <p class="text-sm text-blue-700">
+                                <strong>After payment:</strong> A certified Pandit Ji will be assigned to your booking within 24 hours. You'll receive a confirmation SMS and email with Pandit details.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Back Button -->
+        <div class="mt-12 text-center">
+            <a href="{% url 'profile' %}" class="inline-block text-saffron-500 hover:text-saffron-600 font-semibold transition-colors">
+                ← Back to My Bookings
+            </a>
+        </div>
+
+    </div>
+</section>
+{% endblock %}

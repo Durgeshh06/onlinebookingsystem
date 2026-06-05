@@ -1,0 +1,150 @@
+{% extends 'bookings/base.html' %}
+
+{% block title %}My Bookings | DevBhoomi Online Pandit Booking{% endblock %}
+
+{% block content %}
+<section class="py-12 bg-amber-50/10">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        <!-- Header -->
+        <div class="mb-10 flex flex-col sm:flex-row justify-between sm:items-center">
+            <div>
+                <h1 class="text-3xl font-extrabold text-slate-900 font-outfit">My Booking History</h1>
+                <p class="text-slate-500 mt-2">Track the status of your reserved Poojas and view your assigned Pandit Ji's details.</p>
+            </div>
+            
+            <a href="{% url 'catalog' %}" class="mt-4 sm:mt-0 inline-flex justify-center items-center py-3 px-6 text-sm font-semibold rounded-2xl text-white gradient-safran shadow-md hover:shadow-lg transition-all">
+                Book Another Pooja
+            </a>
+        </div>
+
+        <!-- Bookings List -->
+        <div class="space-y-6">
+            {% for booking in bookings %}
+            <div class="bg-white border border-orange-100 rounded-3xl p-6 sm:p-8 shadow-sm relative overflow-hidden flex flex-col lg:flex-row lg:items-center lg:justify-between gap-8 hover:shadow-md transition-shadow">
+                
+                <!-- Status accent line -->
+                <div class="absolute top-0 bottom-0 left-0 w-2.5 
+                    {% if booking.status == 'PENDING' %}bg-amber-400
+                    {% elif booking.status == 'CONFIRMED' %}bg-sky-500
+                    {% elif booking.status == 'COMPLETED' %}bg-emerald-500
+                    {% else %}bg-rose-500{% endif %}">
+                </div>
+
+                <!-- Left side: Booking details -->
+                <div class="flex-grow space-y-4">
+                    <div class="sm:flex sm:items-center sm:space-x-4">
+                        <!-- Status Badge -->
+                        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider
+                            {% if booking.status == 'PENDING' %}bg-amber-50 border border-amber-200 text-amber-800
+                            {% elif booking.status == 'CONFIRMED' %}bg-sky-50 border border-sky-200 text-sky-800
+                            {% elif booking.status == 'COMPLETED' %}bg-emerald-50 border border-emerald-200 text-emerald-800
+                            {% else %}bg-rose-50 border border-rose-200 text-rose-800{% endif %}">
+                            {{ booking.get_status_display }}
+                        </span>
+                        
+                        <span class="block mt-2 sm:mt-0 text-xs text-slate-400 font-medium">Booked on {{ booking.created_at|date:"F d, Y • h:i A" }}</span>
+                    </div>
+
+                    <div>
+                        <h3 class="text-xl font-bold text-slate-800 font-outfit">{{ booking.pooja.title }}</h3>
+                        <p class="text-xs text-slate-500 font-medium mt-1">Package Price: <strong class="text-saffron-500">₹{{ booking.pooja.base_price }}</strong> • Duration: {{ booking.pooja.estimated_duration_hours }} Hours</p>
+                    </div>
+
+                    <!-- Pooja Date & Muhurat details -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-slate-50 p-4 rounded-2xl text-sm border border-slate-100">
+                        <div>
+                            <span class="block text-xs text-slate-400 font-semibold uppercase tracking-wider mb-1">Auspicious Date</span>
+                            <span class="font-bold text-slate-700 flex items-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                </svg>
+                                {{ booking.date_of_pooja|date:"l, F d, Y" }}
+                            </span>
+                        </div>
+                        <div>
+                            <span class="block text-xs text-slate-400 font-semibold uppercase tracking-wider mb-1">Muhurat Time</span>
+                            <span class="font-bold text-slate-700 flex items-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                                {{ booking.muhurat_time|time:"h:i A" }}
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Venue -->
+                    <div>
+                        <span class="block text-xs text-slate-400 font-semibold uppercase tracking-wider mb-1">Venue Address</span>
+                        <p class="text-sm text-slate-600 leading-relaxed">{{ booking.venue_address }}</p>
+                    </div>
+                </div>
+
+                <!-- Right side: Pandit Assignment details -->
+                <div class="w-full lg:w-72 flex-shrink-0 pt-6 lg:pt-0 lg:pl-6 border-t lg:border-t-0 lg:border-l border-slate-100 flex flex-col justify-center">
+                    <span class="block text-xs text-slate-400 font-semibold uppercase tracking-wider mb-3">Assigned Pandit Ji</span>
+                    
+                    {% if booking.assigned_pandit %}
+                        <div class="flex items-center space-x-3.5">
+                            <div class="w-12 h-12 rounded-full overflow-hidden bg-slate-100 border border-orange-100 shadow flex-shrink-0">
+                                {% if booking.assigned_pandit.profile_picture %}
+                                    <img src="{{ booking.assigned_pandit.profile_picture }}" alt="{{ booking.assigned_pandit.user.get_full_name }}" class="object-cover w-full h-full">
+                                {% else %}
+                                    <div class="w-full h-full flex items-center justify-center bg-orange-100 text-saffron-500 font-bold">
+                                        {{ booking.assigned_pandit.user.first_name|slice:":1" }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <div>
+                                <h4 class="text-sm font-bold text-slate-800 leading-snug">{{ booking.assigned_pandit.user.get_full_name|default:booking.assigned_pandit.user.username }}</h4>
+                                <a href="tel:{{ booking.assigned_pandit.phone_number }}" class="text-xs text-saffron-500 font-semibold hover:underline block mt-0.5">{{ booking.assigned_pandit.phone_number }}</a>
+                                <p class="text-[10px] text-slate-400 leading-none mt-1">Languages: {{ booking.assigned_pandit.languages_spoken }}</p>
+                            </div>
+                        </div>
+                    {% else %}
+                        <div class="bg-amber-50/40 border border-amber-100 p-4 rounded-2xl flex items-center space-x-3">
+                            <div class="w-8 h-8 rounded-lg bg-amber-100 flex items-center justify-center text-amber-600 flex-shrink-0">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                            </div>
+                            <div>
+                                <h4 class="text-xs font-bold text-slate-700 leading-snug">Pending Pandit Assignment</h4>
+                                <p class="text-[10px] text-slate-400 leading-tight mt-0.5">We are checking with local Pandit Jis who match this specialization.</p>
+                            </div>
+                        </div>
+                    {% endif %}
+
+                    {% if booking.status == 'PENDING' or booking.status == 'CONFIRMED' %}
+                        <div class="mt-5 border-t border-slate-100 pt-4">
+                            <form method="POST" action="{% url 'cancel_booking' booking.id %}" onsubmit="return confirm('Are you sure you want to cancel this booking?');">
+                                {% csrf_token %}
+                                <button type="submit" class="w-full inline-flex justify-center items-center py-2.5 px-4 text-xs font-bold rounded-xl text-rose-600 bg-rose-50 hover:bg-rose-100/80 border border-rose-100 hover:border-rose-200 transition-all shadow-sm">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                    Cancel Booking
+                                </button>
+                            </form>
+                        </div>
+                    {% endif %}
+                </div>
+
+            </div>
+            {% empty %}
+            <div class="bg-white rounded-3xl p-12 border border-orange-100 text-center shadow-sm">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-slate-300 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+                </svg>
+                <h3 class="text-lg font-bold text-slate-800 font-outfit">No Bookings Yet</h3>
+                <p class="text-slate-400 text-sm mt-1 mb-6">You haven't reserved any religious services yet. Visit our catalog to find standard Pujas.</p>
+                <a href="{% url 'catalog' %}" class="inline-flex justify-center py-3 px-6 text-sm font-semibold rounded-2xl text-white gradient-safran shadow-md hover:shadow-lg transition-all">
+                    Explore Pooja Catalog
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+
+    </div>
+</section>
+{% endblock %}

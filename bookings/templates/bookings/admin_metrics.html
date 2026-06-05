@@ -1,0 +1,199 @@
+{% extends 'bookings/base.html' %}
+
+{% block title %}Operations Dashboard | DevBhoomi Admin{% endblock %}
+
+{% block content %}
+<section class="py-12 bg-slate-50/50 min-h-screen">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        <!-- Header -->
+        <div class="mb-10 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+            <div>
+                <h1 class="text-3xl font-extrabold text-slate-900 font-outfit">Platform Operational Metrics</h1>
+                <p class="text-slate-500 mt-1">Live tracking of registered Pandits, active reservations, and real-time Pandit allocation.</p>
+            </div>
+            
+            <span class="inline-flex items-center px-4 py-2 rounded-xl text-xs font-bold bg-slate-900 text-white shadow-sm">
+                <span class="flex h-2.5 w-2.5 mr-2 relative">
+                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                    <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
+                </span>
+                Operations Live
+            </span>
+        </div>
+
+        <!-- Metrics KPI Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+            
+            <!-- Card A: Total Active Registered Pandits -->
+            <div class="bg-white border border-slate-100 rounded-3xl p-6 shadow-sm flex items-center justify-between hover:shadow-md transition-shadow relative overflow-hidden">
+                <div class="absolute top-0 bottom-0 left-0 w-2.5 bg-saffron-500"></div>
+                <div class="pl-4">
+                    <span class="block text-xs font-bold text-slate-400 uppercase tracking-wider">Active Registered Pandits</span>
+                    <span class="block text-4xl font-extrabold text-slate-800 font-outfit mt-1.5">{{ total_pandits }}</span>
+                    <span class="block text-xs text-slate-500 mt-1">Verified on platform</span>
+                </div>
+                <div class="w-14 h-14 rounded-2xl bg-orange-50 text-saffron-500 flex items-center justify-center shadow-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+                    </svg>
+                </div>
+            </div>
+
+            <!-- Card B: Currently Booked Pandits -->
+            <div class="bg-white border border-slate-100 rounded-3xl p-6 shadow-sm flex items-center justify-between hover:shadow-md transition-shadow relative overflow-hidden">
+                <div class="absolute top-0 bottom-0 left-0 w-2.5 bg-sky-500"></div>
+                <div class="pl-4">
+                    <span class="block text-xs font-bold text-slate-400 uppercase tracking-wider">Currently Booked Pandits</span>
+                    <span class="block text-4xl font-extrabold text-slate-800 font-outfit mt-1.5">{{ currently_booked }}</span>
+                    <span class="block text-xs text-slate-500 mt-1">Unique assigned on active bookings</span>
+                </div>
+                <div class="w-14 h-14 rounded-2xl bg-sky-50 text-sky-500 flex items-center justify-center shadow-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                </div>
+            </div>
+
+            <!-- Card C: Live Available Pool Size -->
+            <div class="bg-white border border-slate-100 rounded-3xl p-6 shadow-sm flex items-center justify-between hover:shadow-md transition-shadow relative overflow-hidden">
+                <div class="absolute top-0 bottom-0 left-0 w-2.5 bg-emerald-500"></div>
+                <div class="pl-4">
+                    <span class="block text-xs font-bold text-slate-400 uppercase tracking-wider">Live Available Pool Size</span>
+                    <span class="block text-4xl font-extrabold text-slate-800 font-outfit mt-1.5">{{ available_pool }}</span>
+                    <span class="block text-xs text-slate-500 mt-1">Total registered minus Currently Booked</span>
+                </div>
+                <div class="w-14 h-14 rounded-2xl bg-emerald-50 text-emerald-50 flex items-center justify-center shadow-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Upcoming Bookings Section -->
+        <div class="bg-white border border-slate-100 rounded-[32px] overflow-hidden shadow-sm">
+            
+            <div class="p-6 sm:p-8 border-b border-slate-100 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                <div>
+                    <h3 class="text-xl font-bold text-slate-800 font-outfit">Reservations & Assignment Ledger</h3>
+                    <p class="text-xs text-slate-400 mt-0.5">Chronological record of all client reservations.</p>
+                </div>
+            </div>
+
+            <!-- Data Table -->
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-slate-50 text-[11px] font-bold text-slate-400 uppercase tracking-wider border-b border-slate-100">
+                            <th class="py-3 px-3 text-center sm:px-4">ID</th>
+                            <th class="py-3 px-3 sm:px-4">Devotee / Customer</th>
+                            <th class="py-3 px-3 sm:px-4">Pooja Type</th>
+                            <th class="py-3 px-3 sm:px-4">Auspicious Date & Time</th>
+                            <th class="py-3 px-3 sm:px-4">Address</th>
+                            <th class="py-3 px-3 sm:px-4">Assigned Pandit</th>
+                            <th class="py-3 px-3 sm:px-4">Status</th>
+                            <th class="py-3 px-3 sm:px-4 text-center">Operation Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100 text-xs sm:text-sm">
+                        {% for item in bookings_data %}
+                        <tr class="hover:bg-slate-50/50 transition-colors">
+                            <!-- Booking ID -->
+                            <td class="py-3.5 px-3 sm:px-4 font-bold text-slate-500 text-center">#{{ item.booking.id }}</td>
+                            
+                            <!-- Customer -->
+                            <td class="py-3.5 px-3 sm:px-4">
+                                <div class="font-semibold text-slate-700">{{ item.booking.customer.get_full_name|default:item.booking.customer.username }}</div>
+                                <div class="text-[11px] text-slate-400">{{ item.booking.customer.email }}</div>
+                            </td>
+                            
+                            <!-- Pooja -->
+                            <td class="py-3.5 px-3 sm:px-4">
+                                <div class="font-bold text-slate-800">{{ item.booking.pooja.title }}</div>
+                                <div class="text-[10px] text-slate-400 font-medium">{{ item.booking.pooja.estimated_duration_hours }} hrs est.</div>
+                            </td>
+                            
+                            <!-- Date & Time -->
+                            <td class="py-3.5 px-3 sm:px-4">
+                                <div class="font-medium text-slate-700">{{ item.booking.date_of_pooja|date:"M d, Y" }}</div>
+                                <div class="text-[11px] text-saffron-600 font-semibold">{{ item.booking.muhurat_time|time:"h:i A" }}</div>
+                            </td>
+                            <!-- Address -->
+                             <td class="py-3.5 px-3 sm:px-4">
+                                <div class="font-medium text-slate-700">{{ item.booking.venue_address }}</div>
+                                
+                            </td>
+                            <!-- Assigned Pandit -->
+                            <td class="py-3.5 px-3 sm:px-4">
+                                {% if item.booking.assigned_pandit %}
+                                    <div class="flex items-center space-x-2">
+                                        <div class="w-7 h-7 rounded-full overflow-hidden bg-slate-100 border border-slate-200 flex-shrink-0">
+                                            {% if item.booking.assigned_pandit.profile_picture %}
+                                                <img src="{{ item.booking.assigned_pandit.profile_picture }}" alt="Pandit Profile" class="object-cover w-full h-full">
+                                            {% else %}
+                                                <div class="w-full h-full flex items-center justify-center bg-orange-100 text-saffron-500 font-bold text-[10px]">
+                                                    {{ item.booking.assigned_pandit.user.first_name|slice:":1" }}
+                                                </div>
+                                            {% endif %}
+                                        </div>
+                                        <div>
+                                            <div class="font-semibold text-slate-700 text-xs sm:text-sm leading-tight">{{ item.booking.assigned_pandit.user.get_full_name|default:item.booking.assigned_pandit.user.username }}</div>
+                                            <div class="text-[10px] text-slate-400 leading-none mt-0.5">{{ item.booking.assigned_pandit.phone_number }}</div>
+                                        </div>
+                                    </div>
+                                {% else %}
+                                    <span class="text-[10px] font-bold text-amber-500 bg-amber-50 px-2 py-0.5 rounded border border-amber-100">Unassigned</span>
+                                {% endif %}
+                            </td>
+                            
+                            <!-- Status Badges -->
+                            <td class="py-3.5 px-3 sm:px-4">
+                                <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider
+                                    {% if item.booking.status == 'PENDING' %}bg-amber-50 border border-amber-100 text-amber-700
+                                    {% elif item.booking.status == 'CONFIRMED' %}bg-sky-50 border border-sky-100 text-sky-700
+                                    {% elif item.booking.status == 'COMPLETED' %}bg-emerald-50 border border-emerald-100 text-emerald-700
+                                    {% else %}bg-rose-50 border border-rose-100 text-rose-700{% endif %}">
+                                    {{ item.booking.get_status_display }}
+                                </span>
+                            </td>
+ 
+                            <!-- Actions: Interactive Pandit Assignment -->
+                            <td class="py-3.5 px-3 sm:px-4 text-center">
+                                {% if item.booking.status == 'PENDING' or item.booking.status == 'CONFIRMED' %}
+                                    <form method="POST" action="{% url 'assign_pandit' item.booking.id %}" class="flex flex-col xl:flex-row items-center gap-1.5 justify-center">
+                                        {% csrf_token %}
+                                        <select name="pandit_id" required class="w-40 sm:w-44 max-w-full text-[11px] bg-slate-50 border border-slate-200 rounded-lg p-1.5 focus:ring-1 focus:ring-saffron-500 focus:outline-none text-slate-700 font-medium truncate">
+                                            <option value="">-- Choose Candidate --</option>
+                                            {% for pandit in item.candidates %}
+                                                <option value="{{ pandit.id }}" {% if item.booking.assigned_pandit.id == pandit.id %}selected{% endif %}>
+                                                    {{ pandit.user.get_full_name|default:pandit.user.username }} ({{ pandit.base_city }})
+                                                </option>
+                                            {% empty %}
+                                                <option disabled>No matching Pandits</option>
+                                            {% endfor %}
+                                        </select>
+                                        <button type="submit" class="bg-saffron-500 hover:bg-saffron-600 text-white text-[11px] font-bold px-3 py-1.5 rounded-lg shadow-sm hover:shadow hover:scale-[1.01] transition-all whitespace-nowrap">
+                                            {% if item.booking.status == 'CONFIRMED' %}Reassign{% else %}Assign{% endif %}
+                                        </button>
+                                    </form>
+                                {% else %}
+                                    <div class="text-[11px] text-slate-400 text-center font-medium italic">Assignment Lock</div>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="7" class="py-12 text-center text-slate-400 font-medium">No bookings recorded on the ledger.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+
+    </div>
+</section>
+{% endblock %}
